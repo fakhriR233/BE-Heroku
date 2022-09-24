@@ -150,6 +150,12 @@ func (h *handlerUser) GetUser(w http.ResponseWriter, r *http.Request) {
 		  user.Address = userDataOld.Address
 	  }
 
+	  if request.Status != "" {
+		user.Status = request.Status
+	  }else {
+		  user.Status = userDataOld.Status
+	  }
+
 	  user.Subscribe = userDataOld.Subscribe
   
 	data, err := h.UserRepository.UpdateUser(user,id)
