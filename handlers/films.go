@@ -6,12 +6,18 @@ import (
 	"dumbflix_be/models"
 	"dumbflix_be/repositories"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gorilla/mux"
+
+	"context"
+
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 )
 
 type handlerFilm struct {
@@ -36,9 +42,9 @@ func (h *handlerFilm) FindFilms(w http.ResponseWriter, r *http.Request) {
 	  return
 	}
 
-	for i, p := range film {
-		film[i].ThumbnailFilm = os.Getenv("PATH_FILE") + p.ThumbnailFilm
-	}
+	// for i, p := range film {
+	// 	film[i].ThumbnailFilm = os.Getenv("PATH_FILE") + p.ThumbnailFilm
+	// }
 
 	// for i, p := range film {
 	// 	film[i].ThumbnailFilm = path_file + p.ThumbnailFilm
@@ -67,7 +73,7 @@ func (h *handlerFilm) GetFilm(w http.ResponseWriter, r *http.Request) {
 	  return
 	}
 
-	film.ThumbnailFilm = os.Getenv("PATH_FILE") + film.ThumbnailFilm
+	// film.ThumbnailFilm = os.Getenv("PATH_FILE") + film.ThumbnailFilm
   
 	w.WriteHeader(http.StatusOK)
 	response := dto.SuccessResult{Code: http.StatusOK, Data: convertResponseFilm(film)}
@@ -81,7 +87,7 @@ func (h *handlerFilm) GetFilm(w http.ResponseWriter, r *http.Request) {
 	// userId := int(userInfo["id"].(float64)) 
 
 	dataContex := r.Context().Value("dataFile") // add this code
-  	filename := dataContex.(string)
+  	filepath := dataContex.(string)
 
 	year, _ := strconv.Atoi(r.FormValue("Year"))
 	category_id, _ := strconv.Atoi(r.FormValue("CategoryID"))
@@ -108,10 +114,25 @@ func (h *handlerFilm) GetFilm(w http.ResponseWriter, r *http.Request) {
 	  json.NewEncoder(w).Encode(response)
 	  return
 	}
+
+	var ctx = context.Background()
+	var CLOUD_NAME = os.Getenv("CLOUD_NAME")
+	var API_KEY = os.Getenv("API_KEY")
+	var API_SECRET = os.Getenv("API_SECRET")
+
+	// Add your Cloudinary credentials ...
+	cld, _ := cloudinary.NewFromParams(CLOUD_NAME, API_KEY, API_SECRET)
+
+// Upload file to Cloudinary ...
+	resp, err := cld.Upload.Upload(ctx, filepath, uploader.UploadParams{Folder: "dumbmerch"});
+
+	if err != nil {
+	fmt.Println(err.Error())
+	}
   
 	film := models.Film{
 		Title:    			request.Title,
-		ThumbnailFilm:    	filename,
+		ThumbnailFilm:    	resp.SecureURL,
 		Year:    			request.Year,
 		CategoryID:    		request.CategoryID,
 		Description:    	request.Description,
