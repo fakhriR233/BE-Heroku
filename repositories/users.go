@@ -40,7 +40,7 @@ func (r *repository) GetUser(ID int) (models.User, error) {
   }
 
 func (r *repository) UpdateUser(user models.User, ID int) (models.User, error) {
-	err := r.db.Raw("UPDATE users SET full_name=?, email=?, password=?, gender=?, phone=?, address=? WHERE id=?", user.FullName, user.Email, user.Password,user.Gender, user.Phone,user.Address,ID).Scan(&user).Error
+	err := r.db.Raw("UPDATE users SET full_name=?, email=?, password=?, gender=?, phone=?, address=?, status=? WHERE id=?", user.FullName, user.Email, user.Password,user.Gender, user.Phone,user.Address,user.Status,ID).Scan(&user).Error
   
 	return user, err
   }
