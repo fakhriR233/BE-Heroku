@@ -17,6 +17,6 @@ type UpdateUserRequest struct {
 	Gender   string `json:"gender" form:"gender"`
 	Phone    string `json:"phone" form:"phone"`
 	Address  string `json:"address" form:"address"`
-	Status   string `json:"status"`
+	Status   string `json:"status" form:"status"`
 	//   Subscribe 	string `json:"subscribe" form:"subscribe" validate:"required"`
 }

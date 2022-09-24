@@ -206,6 +206,7 @@ func convertResponse(u models.User) usersdto.UserResponse {
 	Gender:		u.Gender,
 	Phone:		u.Phone,
 	Address:	u.Address,
+	Status:		u.Status,
 	Subscribe: 	u.Subscribe,
   }
 }
